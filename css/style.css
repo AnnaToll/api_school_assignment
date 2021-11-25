@@ -1,8 +1,21 @@
+* {
+    margin: 0;
+
+}
+
 body {
     background-color: rgb(243, 243, 243);
     margin: 0;
     font-family: 'Lato', sans-serif;
     color: rgb(32, 32, 32);
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+h4 {
+    margin-bottom: 8px;
 }
 
 p {
@@ -17,6 +30,7 @@ p {
 
 #search-result-messages {
     font-weight: 500;
+    margin-bottom: 60px;
 }
 
 #container {
@@ -24,12 +38,14 @@ p {
     min-height: 80vh;
     width: 70%;
     margin: 0 auto;
-    padding: 3% 4%;
+    padding: 5% 4%;
 }
 
 #filter {
     display: flex;
+    column-gap: 7px;
     align-items: flex-start;
+    margin-bottom: 17px;
 }
 
 #filter-art-works {
@@ -42,13 +58,14 @@ p {
 
 .search-result-img {
     max-width: 100%;
+    margin-top: 20px;
 }
 
 #search-result-container {
     display: flex;
-    /* width: 100%; */
     flex-wrap: wrap;
     justify-content: space-between;
+    row-gap: 50px;
 }
 
 #search-result-container > div {
