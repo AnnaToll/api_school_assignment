@@ -10,8 +10,14 @@ body {
     color: rgb(32, 32, 32);
 }
 
+a {
+    color: rgb(32, 32, 32);
+    text-decoration: none;
+}
+
 h1 {
     margin-bottom: 30px;
+
 }
 
 h4 {
