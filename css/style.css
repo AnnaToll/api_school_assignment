@@ -1,0 +1,27 @@
+#filter {
+    display: flex;
+    align-items: flex-start;
+}
+
+#filter-art-works {
+    display: grid;
+}
+
+#search-result {
+    display: flex;
+}
+
+.search-result-img {
+    max-width: 100%;
+}
+
+#search-result-container {
+    display: flex;
+    width: 80%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#search-result-container > div {
+    width: 30%;
+}
