@@ -2,6 +2,7 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn');
     searchMessage = document.getElementById('search-result-messages'),
+    fixBug = 'end',
     searchResultContainer = document.getElementById("search-result-container");
 
 searchInput.addEventListener('keyup', (e) => {
@@ -10,12 +11,13 @@ searchInput.addEventListener('keyup', (e) => {
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
         return;
     } 
-    
+
     searchBtn.click();
 })
 
 searchBtn.addEventListener('click', async () => {
-    if (searchInput.value == '') return;
+    if (searchInput.value == '' || fixBug == 'beginning') return;
+    fixBug = 'beginning';
     searchResultContainer.innerHTML = '';
     searchMessage.innerText = 'Söker.';
     let pagesAndResultsArr = apiFetchResultSetup();
@@ -36,10 +38,6 @@ searchBtn.addEventListener('click', async () => {
                             <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
                         </div>
                     `;
-                    console.log(matchedArtwork);
-                    console.log(artWork.id);
-                    console.log(artWork.title);
-                    console.log(artWork.artist_title);
                 }
             }
         }
@@ -49,6 +47,7 @@ searchBtn.addEventListener('click', async () => {
     } else {
         searchMessage.innerText = ' Sökning klar.';
     }
+    fixBug = 'end';
 })
 
 function apiFetchResultSetup() {
