@@ -10,6 +10,7 @@ searchInput.addEventListener('keyup', (e) => {
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
         return;
     } 
+    
     searchBtn.click();
 })
 
@@ -68,92 +69,5 @@ async function fetchArtwork(id) {
     return matchedArtworkObject.data;
 }
 
-/* 
-async function checkPages() {
-    let response = await fetch('https://api.artic.edu/api/v1/artworks/?fields=image_id,title,artist_titles,place_of_origin,date_display,medium_display,credit_line');
-    let artWorks = await response.json();
-    return artWorks.pagination.total_pages;
-} */
-
-
-// let response = await fetch(`https://api.artic.edu/api/v1/artworks?page=${i}&fields=image_id%2Ctitle%2Cartist_titles%2Cplace_of_origin%2Cdate_display%2Cmedium_display%2Ccredit_line`);
-
-
-/* 
-    for (let artWork of artWorks.data) {
-        let option = document.createElement('a');
-        allArtworksList.append(option);
-        option.innerText = artWork.title;
-        option.id = artWork.id;
-        option.addEventListener('click', () => {
-            console.log('hejhejehjejhej');
-            searchResultContainer.innerHTML = `
-            <img src="https://www.artic.edu/iiif/2/${artWork.image_id}/full/843,/0/default.jpg">
-            <section>
-                <h2>${artWork.title}</h2>
-                <i><strong>Artist:</strong> ${artWork.artist_titles.join(', ')}
-                <br>${artWork.place_of_origin}, ${artWork.date_display}</i>
-                <p>${artWork.medium_display}</p>
-                <p>${artWork.credit_line}</p>
-            </section>
-            `;
-            })
-            
-        }
-        if (allArtworksList.value == 'Woman mending') {
-            console.log('success');
-        }  */
-
-
-
-/* async function fetchAllArtworks() {
-    let response = await fetch('https://api.artic.edu/api/v1/artworks/?fields=image_id,title,artist_titles,place_of_origin,date_display,medium_display,credit_line');
-    console.log(response);
-    let artWorks = await response.json();
-    console.log(artWorks);
-    for (let artWork of artWorks.data) {
-        let option = document.createElement('a');
-        allArtworksList.append(option);
-        option.innerText = artWork.title;
-        option.id = artWork.id;
-        option.addEventListener('click', () => {
-            console.log('hejhejehjejhej');
-            searchResultContainer.innerHTML = `
-            <img src="https://www.artic.edu/iiif/2/${artWork.image_id}/full/843,/0/default.jpg">
-            <section>
-                <h2>${artWork.title}</h2>
-                <i><strong>Artist:</strong> ${artWork.artist_titles.join(', ')}
-                <br>${artWork.place_of_origin}, ${artWork.date_display}</i>
-                <p>${artWork.medium_display}</p>
-                <p>${artWork.credit_line}</p>
-            </section>
-            `;
-            })
-            
-        }
-        if (allArtworksList.value == 'Woman mending') {
-            console.log('success');
-        } 
-    }
-    fetchAllArtworks(); */
-
-
-
-
-    
-    // <i><strong>Artist:</strong> ${artWork.artist_titles.join(', ')}</i>
-
-/* async function fetchData2() {
-    // let response = await fetch('https://api.artic.edu/api/v1/artworks/27992?fields=id,title,image_id');
-    let response = await fetch('https://api.artic.edu/api/v1/artworks/129884');
-    // let response = await fetch('https://api.artic.edu/api/v1');
-    console.log(response);
-    let data = await response.json();
-    console.log(data);
-}
-
-fetchData2(); */
-
-
-
+// let response = await fetch('https://api.artic.edu/api/v1/artworks/?fields=image_id,title,artist_titles,place_of_origin,date_display,medium_display,credit_line');
 
