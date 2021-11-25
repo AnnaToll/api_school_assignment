@@ -2,7 +2,7 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn');
     searchMessage = document.getElementById('search-result-messages'),
-    fixBug = 'end',
+    fixBug = 'end', /* My idea was to create this variable to prevent duplicates from being created in search result, when typing fast. Seems to be working weirdly enough, haha. */
     searchResultContainer = document.getElementById("search-result-container");
 
 searchInput.addEventListener('keyup', (e) => {
@@ -58,9 +58,7 @@ function apiFetchResultSetup() {
 
     pagesAndResultsArr.push(pagesFromApi, resultsPerPage);
     return pagesAndResultsArr;
-
 }
-
 
 async function fetchArtwork(id) {
     let response = await fetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=id,title,artist_title,image_id,place_of_origin,date_display`);
