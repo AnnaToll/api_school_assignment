@@ -1,3 +1,32 @@
+body {
+    background-color: rgb(243, 243, 243);
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    color: rgb(32, 32, 32);
+}
+
+p {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.artist {
+    color: grey;
+    font-weight: 700;
+}
+
+#search-result-messages {
+    font-weight: 500;
+}
+
+#container {
+    background-color: white;
+    min-height: 80vh;
+    width: 70%;
+    margin: 0 auto;
+    padding: 3% 4%;
+}
+
 #filter {
     display: flex;
     align-items: flex-start;
@@ -17,11 +46,11 @@
 
 #search-result-container {
     display: flex;
-    width: 80%;
+    /* width: 100%; */
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
 #search-result-container > div {
-    width: 30%;
+    width: 31%;
 }
