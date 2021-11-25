@@ -1,28 +1,24 @@
-/* async function fetchData() {
-    let response = await fetch('http://colormind.io/api/', {
-        method: 'POST',
-        body: JSON.stringify({
-            model : "default"
-        })
-    });
-    console.log(response);
-    let data = await response.json();
-    console.log(data);
-}
-
-fetchData(); */
-
-
 let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn');
+    searchMessage = document.getElementById('search-result-message'),
     searchResultContainer = document.getElementById("search-result-container");
+
+searchInput.addEventListener('keyup', (e) => {
+    if (e.target.value.length < 3) {
+        searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
+        return;
+    } 
+    searchMessage.innerText = 'Sökresultat.';
+    searchBtn.click();
+})
 
 searchBtn.addEventListener('click', async () => {
     if (searchInput.value == '') return;
     searchResultContainer.innerHTML = '';
-    for (let i = 1; i < 5; i++) {
-        let response = await fetch(`https://api.artic.edu/api/v1/artworks?limit=100&page=${i}&fields=id%2Ctitle%2Cartist_title`);
+    let pagesAndResultsArr = apiFetchResultSetup();
+    for (let i = 1; i < pagesAndResultsArr[0]; i++) {
+        let response = await fetch(`https://api.artic.edu/api/v1/artworks?limit=${pagesAndResultsArr[1]}&page=${i}&fields=id%2Ctitle%2Cartist_title`);
         let artWorks = await response.json();
         for (let artWork of artWorks.data) {
             if (artWork.artist_title != null && artWork.title != null) {
@@ -48,8 +44,22 @@ searchBtn.addEventListener('click', async () => {
             }
         }
     }
-    console.log('done');
+    if (searchResultContainer.innerHTML == '') {
+        searchMessage.innerText = 'Sökningen gav inga resultat.';
+    }
+    searchMessage.innerText += ' Sökning klar.';
 })
+
+function apiFetchResultSetup() {
+    // You can fetch max 100 result per page from the api, and max 100 pages, but they ask that you don't push the limits if you don't have to (there are 115 000 artwork objects in total).
+    let pagesAndResultsArr = [],
+        resultsPerPage = 100;
+        pagesFromApi = 5;
+
+    pagesAndResultsArr.push(pagesFromApi, resultsPerPage);
+    return pagesAndResultsArr;
+
+}
 
 
 async function fetchArtwork(id) {
