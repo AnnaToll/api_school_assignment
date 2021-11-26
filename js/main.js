@@ -2,22 +2,23 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn');
     searchMessage = document.getElementById('search-result-messages'),
-    fixBug = 'end', /* My idea was to create this variable to prevent duplicates from being created in search result, when typing fast. Seems to be working weirdly enough, haha. */
     searchResultContainer = document.getElementById("search-result-container");
 
 searchInput.addEventListener('keyup', (e) => {
     if (e.target.value.length < 3) {
         searchResultContainer.innerHTML = '';
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
+        if (e.target.value == '') {
+            searchMessage.innerText = '';
+        }
         return;
-    } 
-
+    }
     searchBtn.click();
 })
 
 searchBtn.addEventListener('click', async () => {
-    if (searchInput.value == '' || fixBug == 'beginning') return;
-    fixBug = 'beginning';
+    if (searchInput.value == '') return;
+    let checkInputChange = searchInput.value;
     searchResultContainer.innerHTML = '';
     searchMessage.innerText = 'Söker.';
     let pagesAndResultsArr = apiFetchResultSetup();
@@ -25,12 +26,25 @@ searchBtn.addEventListener('click', async () => {
         let response = await fetch(`https://api.artic.edu/api/v1/artworks?limit=${pagesAndResultsArr[1]}&page=${i}&fields=id%2Ctitle%2Cartist_title`);
         let artWorks = await response.json();
         for (let artWork of artWorks.data) {
-            if (artWork.artist_title != null && artWork.title != null) {
+            if (
+            artWork.artist_title != null 
+            && artWork.title != null
+            ){
                 if (
-                    artWork.title.toLowerCase().includes(searchInput.value.toLowerCase())
-                    || artWork.artist_title.toLowerCase().includes(searchInput.value.toLowerCase())
+                artWork.title.toLowerCase().includes(searchInput.value.toLowerCase())
+                || artWork.artist_title.toLowerCase().includes(searchInput.value.toLowerCase())
                 ){
                     let matchedArtwork = await fetchArtwork(artWork.id);
+                    if (matchedArtwork.image_id == null) continue;
+                    if (searchInput.value.length < 3) {
+                        searchResultContainer.innerHTML = '';
+                        searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
+                        return;
+                    }
+                    if (checkInputChange != searchInput.value) {
+                        searchResultContainer.innerHTML = '';
+                        return;
+                    }
                     searchResultContainer.innerHTML += `
                         <div>
                             <h4>${matchedArtwork.title}</h4>
@@ -47,15 +61,13 @@ searchBtn.addEventListener('click', async () => {
     } else {
         searchMessage.innerText = ' Sökning klar.';
     }
-    fixBug = 'end';
 })
 
 function apiFetchResultSetup() {
     // You can fetch max 100 result per page from the api, and max 100 pages, but they ask that you don't push the limits if you don't have to (there are 115 000 artwork objects in total).
     let pagesAndResultsArr = [],
         resultsPerPage = 100;
-        pagesFromApi = 5;
-
+        pagesFromApi = 10;
     pagesAndResultsArr.push(pagesFromApi, resultsPerPage);
     return pagesAndResultsArr;
 }

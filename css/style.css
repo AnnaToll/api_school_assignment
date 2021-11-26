@@ -49,9 +49,17 @@ p {
 
 #filter {
     display: flex;
-    column-gap: 7px;
+    column-gap: 8px;
     align-items: flex-start;
     margin-bottom: 17px;
+}
+
+#filter input {
+    width: 200px;
+}
+
+#filter button {
+    width: 50px;
 }
 
 #filter-art-works {
