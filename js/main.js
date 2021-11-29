@@ -2,39 +2,74 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn');
     searchMessage = document.getElementById('search-result-messages'),
+    searchQty = document.getElementById('search-result-qty'),
     numberOfKeyups = 0,
+    pageNumber = 1,
     searchResultContainer = document.getElementById("search-result-container");
 
+
 searchInput.addEventListener('keyup', (e) => {
-    if (e.target.value.length < 3) {
-        searchResultContainer.innerHTML = '';
-        searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
-        if (e.target.value == '') {
-            searchMessage.innerText = '';
-        }
-        return;
-    }
+    if (!isInputLongEnough()) return;
     numberOfKeyups++;
     searchBtn.click();
 })
 
+
 searchBtn.addEventListener('click', async () => {
-    if (searchInput.value == '') return;
+    if (!isInputLongEnough()) return;
+    pageNumber = 1;
     let checkInputChange = numberOfKeyups;
-    // let checkInputChange = searchInput.value;
-    searchResultContainer.innerHTML = '';
     searchMessage.innerText = 'Söker.';
-    let response = await fetch(`https://api.artic.edu/api/v1/artworks/search?limit=15&q=${searchInput.value}`);
-    let artWorks = await response.json();
+    let artWorks = await fetchSearchResult(pageNumber);
+    await addSearchResultToPage(artWorks, checkInputChange);
+    checkPaginationBtns();
+})
+
+
+
+btnNextPage.addEventListener('click', async () => {
+    let artWorks = await fetchSearchResult(++pageNumber);
+    await addSearchResultToPage(artWorks, numberOfKeyups);
+    checkPaginationBtns();
+})
+
+
+btnPrevPage.addEventListener('click', async () => {
+    let artWorks = await fetchSearchResult(--pageNumber);
+    await addSearchResultToPage(artWorks, numberOfKeyups);
+    checkPaginationBtns();
+})
+
+
+function checkPaginationBtns() { 
+    if (artWorks.pagination.total_pages > 1) {
+        let paginationBtnsContainer = document.createElement('div'),
+            btnPrevPage = document.createElement('button'),
+            btnNextPage = document.createElement('button');
+        paginationBtnsContainer.id = 'pagination-btn-container';
+        if (pageNumber == 1) {
+            document.getElementById('container').lastElementChild.append(paginationBtnsContainer);
+            btnNextPage.innerText = 'Next page';
+            paginationBtnsContainer.append(btnNextPage);
+            if (paginationBtnsContainer.children.length == 2) btnPrevPage.remove();
+        } else {
+            btnPrevPage.innerText = 'Previous page';
+            paginationBtnsContainer.prepend(btnPrevPage);
+        }
+        if (pageNumber == artWorks.pagination.total_pages) btnNextPage.remove();  
+    }
+}
+
+
+async function addSearchResultToPage(artWorks, checkInputChange) {
+    searchResultContainer.innerHTML = '';
+    searchQty.innerText = `Visar resultat ${artWorks.pagination.offset + 1} - ${artWorks.pagination.offset + artWorks.pagination.limit} av totalt ${artWorks.pagination.total} (sida ${artWorks.pagination.current_page} av ${artWorks.pagination.total_pages})`;
     console.log(artWorks);
+
     for (let artWork of artWorks.data) {
         let matchedArtwork = await fetchArtwork(artWork.id);
         if (matchedArtwork.image_id == null) continue;
-        if (searchInput.value.length < 3) {
-            searchResultContainer.innerHTML = '';
-            searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
-            return;
-        }
+        if (!isInputLongEnough()) return;   
         if (checkInputChange != numberOfKeyups) {
             searchResultContainer.innerHTML = '';
             return;
@@ -43,16 +78,20 @@ searchBtn.addEventListener('click', async () => {
             <div>
                 <h4>${matchedArtwork.title}</h4>
                 <p><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
-                <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
+                <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/400,/0/default.jpg" class="search-result-img">
             </div>
         `;
     }
-    if (searchResultContainer.innerHTML == '') {
-        searchMessage.innerText = 'Sökningen gav inga resultat.';
-    } else {
-        searchMessage.innerText = 'Sökning klar.';
-    }
-})
+    if (searchResultContainer.innerHTML == '') searchMessage.innerText = 'Sökningen gav inga resultat.';
+    else searchMessage.innerText = 'Sökning klar.';
+}
+
+
+async function fetchSearchResult(page) {
+    let response = await fetch(`https://api.artic.edu/api/v1/artworks/search?page=${page}&limit=15&q=${searchInput.value}`);
+    let artWorks = await response.json();
+    return artWorks;
+}
 
 
 async function fetchArtwork(id) {
@@ -61,5 +100,14 @@ async function fetchArtwork(id) {
     return matchedArtworkObject.data;
 }
 
-// let response = await fetch('https://api.artic.edu/api/v1/artworks/?fields=image_id,title,artist_titles,place_of_origin,date_display,medium_display,credit_line');
 
+function isInputLongEnough() {
+    if (searchInput.value.length < 3) {
+        searchResultContainer.innerHTML = '';
+        searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
+        searchQty.innerText = '';
+        paginationBtnsContainer.remove();
+        if (searchInput.value == '') searchMessage.innerText = '';
+        return false;
+    } else return true;
+}

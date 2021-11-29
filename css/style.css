@@ -29,6 +29,11 @@ p {
     font-weight: 300;
 }
 
+button {
+    background-color: white;
+    border: 1px solid grey;
+}
+
 .artist {
     color: grey;
     font-weight: 700;
@@ -36,7 +41,13 @@ p {
 
 #search-result-messages {
     font-weight: 500;
+    margin-bottom: 2px;
+}
+
+#search-result-qty {
     margin-bottom: 60px;
+    font-size: 13px;
+    color: grey;
 }
 
 #container {
@@ -85,4 +96,10 @@ p {
 
 #search-result-container > div {
     width: 31%;
+}
+
+#pagination-btn-container {
+    margin-top: 20px;
+    padding: 1.2em 1.5em;
+    background-color: rgb(240, 240, 240);
 }
