@@ -1,6 +1,9 @@
 let allArtworksList = document.getElementById("filter-art-works"),
     searchInput = document.getElementById('search-input'),
-    searchBtn = document.getElementById('search-btn');
+    searchBtn = document.getElementById('search-btn'),
+    btnPrevPage = document.createElement('button'),
+    btnNextPage = document.createElement('button'),
+    paginationBtnsContainer = document.createElement('div'),
     searchMessage = document.getElementById('search-result-messages'),
     searchQty = document.getElementById('search-result-qty'),
     numberOfKeyups = 0,
@@ -8,7 +11,7 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchResultContainer = document.getElementById("search-result-container");
 
 
-searchInput.addEventListener('keyup', (e) => {
+searchInput.addEventListener('keyup', () => {
     if (!isInputLongEnough()) return;
     numberOfKeyups++;
     searchBtn.click();
@@ -22,30 +25,27 @@ searchBtn.addEventListener('click', async () => {
     searchMessage.innerText = 'Söker.';
     let artWorks = await fetchSearchResult(pageNumber);
     await addSearchResultToPage(artWorks, checkInputChange);
-    checkPaginationBtns();
+    checkPaginationBtns(artWorks);
 })
-
 
 
 btnNextPage.addEventListener('click', async () => {
     let artWorks = await fetchSearchResult(++pageNumber);
     await addSearchResultToPage(artWorks, numberOfKeyups);
-    checkPaginationBtns();
+    checkPaginationBtns(artWorks);
 })
 
 
 btnPrevPage.addEventListener('click', async () => {
     let artWorks = await fetchSearchResult(--pageNumber);
     await addSearchResultToPage(artWorks, numberOfKeyups);
-    checkPaginationBtns();
+    checkPaginationBtns(artWorks);
 })
 
 
-function checkPaginationBtns() { 
+function checkPaginationBtns(artWorks) {
+    if (!isInputLongEnough()) return;
     if (artWorks.pagination.total_pages > 1) {
-        let paginationBtnsContainer = document.createElement('div'),
-            btnPrevPage = document.createElement('button'),
-            btnNextPage = document.createElement('button');
         paginationBtnsContainer.id = 'pagination-btn-container';
         if (pageNumber == 1) {
             document.getElementById('container').lastElementChild.append(paginationBtnsContainer);
@@ -64,7 +64,6 @@ function checkPaginationBtns() {
 async function addSearchResultToPage(artWorks, checkInputChange) {
     searchResultContainer.innerHTML = '';
     searchQty.innerText = `Visar resultat ${artWorks.pagination.offset + 1} - ${artWorks.pagination.offset + artWorks.pagination.limit} av totalt ${artWorks.pagination.total} (sida ${artWorks.pagination.current_page} av ${artWorks.pagination.total_pages})`;
-    console.log(artWorks);
 
     for (let artWork of artWorks.data) {
         let matchedArtwork = await fetchArtwork(artWork.id);
@@ -76,9 +75,11 @@ async function addSearchResultToPage(artWorks, checkInputChange) {
         }
         searchResultContainer.innerHTML += `
             <div>
-                <h4>${matchedArtwork.title}</h4>
-                <p><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
-                <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/400,/0/default.jpg" class="search-result-img">
+                <h4 class="crop">${matchedArtwork.title}</h4>
+                <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
+                <div class="search-result-img-container">
+                    <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/400,/0/default.jpg" class="search-result-img">
+                </div>
             </div>
         `;
     }
@@ -102,7 +103,7 @@ async function fetchArtwork(id) {
 
 
 function isInputLongEnough() {
-    if (searchInput.value.length < 3) {
+    if (searchInput.value.length <= 3) {
         searchResultContainer.innerHTML = '';
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
         searchQty.innerText = '';
