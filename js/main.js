@@ -1,5 +1,4 @@
-let allArtworksList = document.getElementById("filter-art-works"),
-    searchInput = document.getElementById('search-input'),
+let searchInput = document.getElementById('search-input'),
     searchBtn = document.getElementById('search-btn'),
     btnPrevPage = document.createElement('button'),
     btnNextPage = document.createElement('button'),
@@ -8,7 +7,7 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchQty = document.getElementById('search-result-qty'),
     numberOfKeyups = 0,
     pageNumber = 1,
-    searchResultsContainer = document.getElementById("search-result-container");
+    searchResultsContainer = document.getElementById("search-results-container");
 
 
 searchInput.addEventListener('keyup', () => {
@@ -76,26 +75,22 @@ async function addSearchResultToPage(artWorks, checkInputChange) {
         let matchedResultContainer = document.createElement('div');
         searchResultsContainer.append(matchedResultContainer);
         matchedResultContainer.innerHTML += `
-            <h4 class="crop">${matchedArtwork.title}</h4>
-            <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
-            <div class="search-result-img-container">
-                <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
+            <div>
+                <h4 class="crop">${matchedArtwork.title}</h4>
+                <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
+                <div class="search-result-img-container">
+                    <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
+                </div>
             </div>
         `;
+        matchedResultContainer.classList.add('matched-result-container');
+        matchedResultContainer.addEventListener('mouseover', (e) => {
+            matchedResultContainer.classList.add('matched-result-container-hover');
+            matchedResultContainer.addEventListener('mouseout', (e) => matchedResultContainer.classList.remove('matched-result-container-hover'))
+        })
     }
     if (searchResultsContainer.innerHTML == '') searchMessage.innerText = 'Sökningen gav inga resultat.';
     else searchMessage.innerText = 'Sökning klar.';
-    let classes = document.querySelectorAll('.crop');
-    classes.forEach((element) => {
-        element.addEventListener('mouseover', (e) => {
-            e.target.classList.remove('crop');
-            e.target.addEventListener('mouseout', (e) => {
-                e.target.classList.add('crop');
-            })
-        })
-    })
-
-    console.log(classes);
 }
 
 

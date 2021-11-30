@@ -1,19 +1,17 @@
+/* ----------------------- General settings ----------------------- */
+
+
 * {
     box-sizing: border-box;
     margin: 0;
-
 }
 
 body {
-    background-color: rgb(243, 243, 243);
-    margin: 0;
     font-family: 'Lato', sans-serif;
     color: rgb(32, 32, 32);
-}
-
-a {
-    color: rgb(32, 32, 32);
-    text-decoration: none;
+    background-color: white;
+    min-height: 100vh;
+    padding: 5% 5%;
 }
 
 h1 {
@@ -30,32 +28,17 @@ p {
     font-weight: 300;
 }
 
+a {
+    color: rgb(32, 32, 32);
+    text-decoration: none;
+}
+
 button {
     background-color: white;
     border: 1px solid grey;
 }
 
-.artist {
-    color: grey;
-    font-weight: 700;
-}
-
-#search-result-messages {
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-#search-result-qty {
-    margin-bottom: 60px;
-    font-size: 13px;
-    color: grey;
-}
-
-body {
-    background-color: white;
-    min-height: 100vh;
-    padding: 5% 5%;
-}
+/* ----------------------- Search field ----------------------- */
 
 #filter {
     display: flex;
@@ -72,8 +55,48 @@ body {
     width: 50px;
 }
 
-#filter-art-works {
+/* ----------------------- Search status ----------------------- */
+
+#search-result-messages {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+#search-result-qty {
+    margin-bottom: 60px;
+    font-size: 13px;
+    color: grey;
+}
+
+
+/* ----------------------- Search result ----------------------- */
+
+#search-results-container {
     display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 3%;
+    row-gap: 50px;
+}
+
+.matched-result-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.matched-result-container > div {
+    box-shadow: 0 0 0 10000px rgba(255, 255, 255, 0);
+    transition: box-shadow 300ms ease-in-out;
+}
+
+.artist {
+    color: grey;
+    font-weight: 700;
+}
+
+.crop {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .search-result-img-container {
@@ -90,18 +113,6 @@ body {
     object-fit: cover;
 }
 
-#search-result-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 3%;
-    row-gap: 50px;
-    max-width: 100%;
-}
-
-#search-result-container > div {
-    overflow: hidden;
-}
-
 #pagination-btn-container {
     display: flex;
     column-gap: 8px;
@@ -110,8 +121,55 @@ body {
     background-color: rgb(240, 240, 240);
 }
 
-.crop {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+/* #dark-background {
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    transition: opacity 500ms;
 }
+ */
+
+.matched-result-container-hover {
+    overflow: visible;
+}
+
+.matched-result-container-hover > div {
+    position: absolute;
+    top: 0;
+    left: -11%;
+    right: -11%;
+    background-color: white;
+    z-index: 2;
+    padding: 7%;
+    box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 400ms;
+}
+
+.matched-result-container-hover .crop {
+    overflow: visible;
+    text-overflow: initial;
+    white-space: normal;
+}
+
+.matched-result-container-hover .search-result-img {
+    position: relative;
+    height: auto;
+    object-fit: cover;
+}
+
+.matched-result-container-hover .search-result-img-container {
+    position: relative;
+    padding-top: 0;
+}
+
+/* #darken #dark-background {
+    opacity: 1;
+    z-index: 1;
+    transition: opacity 500ms;
+}
+ */
