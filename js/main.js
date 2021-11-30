@@ -8,7 +8,7 @@ let allArtworksList = document.getElementById("filter-art-works"),
     searchQty = document.getElementById('search-result-qty'),
     numberOfKeyups = 0,
     pageNumber = 1,
-    searchResultContainer = document.getElementById("search-result-container");
+    searchResultsContainer = document.getElementById("search-result-container");
 
 
 searchInput.addEventListener('keyup', () => {
@@ -48,7 +48,7 @@ function checkPaginationBtns(artWorks) {
     if (artWorks.pagination.total_pages > 1) {
         paginationBtnsContainer.id = 'pagination-btn-container';
         if (pageNumber == 1) {
-            document.getElementById('container').lastElementChild.append(paginationBtnsContainer);
+            document.querySelector('body').lastElementChild.append(paginationBtnsContainer);
             btnNextPage.innerText = 'Next page';
             paginationBtnsContainer.append(btnNextPage);
             if (paginationBtnsContainer.children.length == 2) btnPrevPage.remove();
@@ -62,7 +62,7 @@ function checkPaginationBtns(artWorks) {
 
 
 async function addSearchResultToPage(artWorks, checkInputChange) {
-    searchResultContainer.innerHTML = '';
+    searchResultsContainer.innerHTML = '';
     searchQty.innerText = `Visar resultat ${artWorks.pagination.offset + 1} - ${artWorks.pagination.offset + artWorks.pagination.limit} av totalt ${artWorks.pagination.total} (sida ${artWorks.pagination.current_page} av ${artWorks.pagination.total_pages})`;
 
     for (let artWork of artWorks.data) {
@@ -70,21 +70,32 @@ async function addSearchResultToPage(artWorks, checkInputChange) {
         if (matchedArtwork.image_id == null) continue;
         if (!isInputLongEnough()) return;   
         if (checkInputChange != numberOfKeyups) {
-            searchResultContainer.innerHTML = '';
+            searchResultsContainer.innerHTML = '';
             return;
         }
-        searchResultContainer.innerHTML += `
-            <div>
-                <h4 class="crop">${matchedArtwork.title}</h4>
-                <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
-                <div class="search-result-img-container">
-                    <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/400,/0/default.jpg" class="search-result-img">
-                </div>
+        let matchedResultContainer = document.createElement('div');
+        searchResultsContainer.append(matchedResultContainer);
+        matchedResultContainer.innerHTML += `
+            <h4 class="crop">${matchedArtwork.title}</h4>
+            <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
+            <div class="search-result-img-container">
+                <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
             </div>
         `;
     }
-    if (searchResultContainer.innerHTML == '') searchMessage.innerText = 'Sökningen gav inga resultat.';
+    if (searchResultsContainer.innerHTML == '') searchMessage.innerText = 'Sökningen gav inga resultat.';
     else searchMessage.innerText = 'Sökning klar.';
+    let classes = document.querySelectorAll('.crop');
+    classes.forEach((element) => {
+        element.addEventListener('mouseover', (e) => {
+            e.target.classList.remove('crop');
+            e.target.addEventListener('mouseout', (e) => {
+                e.target.classList.add('crop');
+            })
+        })
+    })
+
+    console.log(classes);
 }
 
 
@@ -104,7 +115,7 @@ async function fetchArtwork(id) {
 
 function isInputLongEnough() {
     if (searchInput.value.length <= 3) {
-        searchResultContainer.innerHTML = '';
+        searchResultsContainer.innerHTML = '';
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
         searchQty.innerText = '';
         paginationBtnsContainer.remove();
