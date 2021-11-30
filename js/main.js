@@ -7,7 +7,8 @@ let searchInput = document.getElementById('search-input'),
     searchQty = document.getElementById('search-result-qty'),
     numberOfKeyups = 0,
     pageNumber = 1,
-    searchResultsContainer = document.getElementById("search-results-container");
+    searchResultsContainer = document.getElementById("search-results-container"),
+    chosenArtworkContainer = document.createElement('section');
 
 
 searchInput.addEventListener('keyup', () => {
@@ -75,22 +76,44 @@ async function addSearchResultToPage(artWorks, checkInputChange) {
         let matchedResultContainer = document.createElement('div');
         searchResultsContainer.append(matchedResultContainer);
         matchedResultContainer.innerHTML += `
-            <div>
+            <a href="#">
                 <h4 class="crop">${matchedArtwork.title}</h4>
                 <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
                 <div class="search-result-img-container">
                     <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg" class="search-result-img">
                 </div>
-            </div>
+            </a>
         `;
         matchedResultContainer.classList.add('matched-result-container');
-        matchedResultContainer.addEventListener('mouseover', (e) => {
+        matchedResultContainer.addEventListener('mouseover', () => {
             matchedResultContainer.classList.add('matched-result-container-hover');
-            matchedResultContainer.addEventListener('mouseout', (e) => matchedResultContainer.classList.remove('matched-result-container-hover'))
+            matchedResultContainer.addEventListener('mouseout', () => matchedResultContainer.classList.remove('matched-result-container-hover'))
+        })
+        matchedResultContainer.addEventListener('click', () => {
+            displayChosenArtwork(matchedArtwork.id);
+            return;
         })
     }
     if (searchResultsContainer.innerHTML == '') searchMessage.innerText = 'Sökningen gav inga resultat.';
     else searchMessage.innerText = 'Sökning klar.';
+}
+
+async function displayChosenArtwork(artworkId) {
+    searchInput.value = '';
+    isInputLongEnough();
+    let main = document.querySelector('main');
+    chosenArtworkContainer.id = 'chosen-artwork-container';
+    main.prepend(chosenArtworkContainer);
+    let matchedArtwork = await fetchArtwork(artworkId);
+    chosenArtworkContainer.innerHTML = `
+        <img src="https://www.artic.edu/iiif/2/${matchedArtwork.image_id}/full/843,/0/default.jpg">
+        <section>
+            <h2>${matchedArtwork.title}</h2>
+            <p class="crop"><span class="artist">${matchedArtwork.artist_title}</span><i> ${matchedArtwork.place_of_origin}, ${matchedArtwork.date_display}</i></p>
+            <p>${matchedArtwork.credit_line}</p>
+            <i>${matchedArtwork.medium_display}</i>
+        </section>
+    `;
 }
 
 
@@ -102,14 +125,21 @@ async function fetchSearchResult(page) {
 
 
 async function fetchArtwork(id) {
-    let response = await fetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=id,title,artist_title,image_id,place_of_origin,date_display`);
-    let matchedArtworkObject = await response.json();
-    return matchedArtworkObject.data;
+    if (searchInput.value == '') {
+        let response = await fetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=id,title,artist_title,image_id,place_of_origin,date_display,medium_display,credit_line`);
+        let matchedArtworkObject = await response.json();
+        return matchedArtworkObject.data;
+    } else {
+        let response = await fetch(`https://api.artic.edu/api/v1/artworks/${id}?fields=id,title,artist_title,image_id,place_of_origin,date_display`);
+        let matchedArtworkObject = await response.json();
+        return matchedArtworkObject.data;
+    }
 }
 
 
 function isInputLongEnough() {
     if (searchInput.value.length <= 3) {
+        chosenArtworkContainer.innerHTML = '';
         searchResultsContainer.innerHTML = '';
         searchMessage.innerText = 'Ange minst 3 tecken i sökfältet.';
         searchQty.innerText = '';
