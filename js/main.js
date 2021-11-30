@@ -48,7 +48,7 @@ function checkPaginationBtns(artWorks) {
     if (artWorks.pagination.total_pages > 1) {
         paginationBtnsContainer.id = 'pagination-btn-container';
         if (pageNumber == 1) {
-            document.querySelector('body').lastElementChild.append(paginationBtnsContainer);
+            document.body.append(paginationBtnsContainer);
             btnNextPage.innerText = 'Next page';
             paginationBtnsContainer.append(btnNextPage);
             if (paginationBtnsContainer.children.length == 2) btnPrevPage.remove();
@@ -100,7 +100,7 @@ async function addSearchResultToPage(artWorks, checkInputChange) {
 
 
 async function fetchSearchResult(page) {
-    let response = await fetch(`https://api.artic.edu/api/v1/artworks/search?page=${page}&limit=15&q=${searchInput.value}`);
+    let response = await fetch(`https://api.artic.edu/api/v1/artworks/search?page=${page}&limit=16&q=${searchInput.value}`);
     let artWorks = await response.json();
     return artWorks;
 }
